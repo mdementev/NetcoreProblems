@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 
 using Xunit;
 
@@ -27,8 +28,68 @@ namespace NetcoreProblems
             Assert.True(IsFollowingSequence(new int[] { 2, 3, 4, 5 }));
             // Roman to integer
             Assert.Equal(1994, RomanToInteger("MCMXCIV"));
+            // AddTwoNumbers
+            var node1 = new ListNode(9)
+            {
+                next = new ListNode(9)
+            };
+            var node2 = new ListNode(9)
+            {
+                next = new ListNode(9)
+            };
+            var expectedNode = new ListNode(8)
+            {
+                next = new ListNode(9)
+                {
+                    next = new ListNode(1)
+                }
+            };
+            Assert.Equal(expectedNode, AddTwoNumbers(node1, node2));
 
             // TestingPerformance();
+        }
+
+        public static ListNode AddTwoNumbers(ListNode a, ListNode b)
+        {
+            var carry = 0;
+            var result = new ListNode();
+            ListNode currentNode = null;
+
+            while (a?.val != null || b?.val != null)
+            {
+                if (currentNode == null)
+                {
+                    currentNode = result;
+                }
+                else
+                {
+                    currentNode.next = new ListNode();
+                    currentNode = currentNode.next;
+                }
+
+                int val = ((a?.val ?? 0) + (b?.val ?? 0) + carry) % 10;
+                carry = ((a?.val ?? 0) + (b?.val ?? 0) + carry) / 10;
+
+                currentNode.val = val;
+
+                if (a != null)
+                {
+                    a = a.next;
+                }
+
+                if (b != null)
+                {
+                    b = b.next;
+                }
+            }
+
+            if (carry > 0)
+            {
+                currentNode.next = new ListNode(carry);
+                currentNode = currentNode.next;
+            }
+
+            return result;
         }
 
         public static void TestingPerformance()
