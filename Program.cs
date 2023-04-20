@@ -1,15 +1,140 @@
-﻿using Xunit;
+﻿using System.Diagnostics;
+
+using Xunit;
 
 namespace NetcoreProblems
 {
-    internal static class Program
+    public static class Program
     {
         private static void Main()
         {
             // two sum using dictionary (hash), O(n) time, O(n) space
             Assert.Equal(TwoSumDict(new int[] { 2, 7, 11, 15 }, 9), new int[] { 0, 1 });
-            // two sum using left and right pointers (sorted array only)
+            // two sum using left and right pointers (sorted array only), O(n) time, O(n) space
             Assert.Equal(TwoSumPointers(new int[] { 2, 4, 5 }, 6), new int[] { 0, 1 });
+            // Palindrome problem (left to right equals right to left),
+            Assert.True(IsPalindrome(1321231));
+            Assert.False(IsPalindrome(13251231));
+            // Is mirrored
+            Assert.True(IsMirror("Abc", "cbA"));
+            Assert.False(IsMirror("Abc", "CbA"));
+            // Is anagram
+            Assert.True(IsAnagram("abc123", "321acb"));
+            Assert.False(IsAnagram("abc1234", "321acb"));
+            Assert.False(IsAnagram("abc123", "321acb4"));
+            // Is following sequence
+            Assert.False(IsFollowingSequence(new int[] { 2, 2, 2, 5 }));
+            Assert.True(IsFollowingSequence(new int[] { 2, 3, 4, 5 }));
+            // Roman to integer
+            Assert.Equal(1994, RomanToInteger("MCMXCIV"));
+
+            // TestingPerformance();
+        }
+
+        public static void TestingPerformance()
+        {
+            int[] arr = Enumerable.Range(1, 100000000).ToArray();
+            Stopwatch watch = Stopwatch.StartNew();
+
+            // new SortedSet<int>(arr);
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+                arr[i]++;
+            }
+
+            watch.Stop();
+            long elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("Took: " + elapsedMs);
+        }
+
+        public static int? RomanToInteger(string s)
+        {
+            Dictionary<char, int> dict = new() { { 'I', 1 }, { 'V', 5 }, { 'X', 10 }, { 'L', 50 }, { 'C', 100 }, { 'D', 500 }, { 'M', 1000 } };
+
+            // tricky cases
+            s = s.Replace("IV", "IIII")
+                .Replace("IX", "VIIII")
+                .Replace("XL", "XXXX")
+                .Replace("XC", "LXXXX")
+                .Replace("CD", "CCCC")
+                .Replace("CM", "DCCCC");
+
+            int result = 0;
+
+            foreach (char ch in s)
+            {
+                result += dict[ch];
+            }
+
+            return result;
+        }
+
+        public static bool? IsFollowingSequence(int[] sequence)
+        {
+            SortedSet<int> set = new(sequence);
+
+            return set.Count == sequence.Length && set.Max - set.Min == sequence.Length - 1;
+        }
+
+        public static bool? IsAnagram(string a, string b)
+        {
+            if (a.Length != b.Length)
+            {
+                return false;
+            }
+
+            Dictionary<char, int> dict = new();
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                _ = dict.TryAdd(a[i], 0);
+                _ = dict.TryAdd(b[i], 0);
+
+                dict[a[i]]--;
+                dict[b[i]]++;
+            }
+
+            return dict.Values.All(a => a == 0);
+        }
+
+        public static bool? IsMirror(string a, string b)
+        {
+            if (a.Length != b.Length)
+            {
+                return false;
+            }
+
+            int i = 0;
+            int j = b.Length - 1;
+
+            for (; j >= 0; j--, i++)
+            {
+                if (a[j] != b[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool? IsPalindrome(int target)
+        {
+            string str = target.ToString();
+            int a = 0, b = str.Length - 1;
+            while (a < b)
+            {
+                if (str[a] != str[b])
+                {
+                    return false;
+                }
+
+                a++;
+                b--;
+            }
+
+            return true;
         }
 
         public static int[]? TwoSumDict(int[] nums, int target)
@@ -30,8 +155,8 @@ namespace NetcoreProblems
 
         public static int[]? TwoSumPointers(int[] nums, int target)
         {
-            var left = 0;
-            var right = nums.Length - 1;
+            int left = 0;
+            int right = nums.Length - 1;
             while (left < right)
             {
                 if (nums[left] + nums[right] == target)
