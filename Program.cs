@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
+using FluentAssertions;
+
 using Xunit;
 
 namespace NetcoreProblems
@@ -35,7 +37,30 @@ namespace NetcoreProblems
             // Longest Common Prefix
             Assert.Equal("fl", LongestCommonPrefix(new string[3] { "flower", "flow", "flight" }));
 
+            // using Fluent assertions going forward....
+
+            // Design hashset problem (not a smart way to)
+            var hashset = new MyHashSet();
+            hashset.Add(5);
+            hashset.Contains(5).Should().BeTrue();
+            hashset.Remove(5);
+            hashset.Contains(5).Should().BeFalse();
+
+            // Reverse integer (nothing smart, just linq)
+            Reverse(123456).Should().Be(654321);
+            Reverse(-123456).Should().Be(-654321);
+
+
             // TestingPerformance();
+        }
+
+        public static int Reverse(int x)
+        {
+            _ = x >= 0
+                ? Int32.TryParse(new string(x.ToString().Reverse().ToArray()), out int a)
+                : Int32.TryParse("-" + new string(x.ToString().Replace("-", "").Reverse().ToArray()), out a);
+
+            return a;
         }
 
         public static string LongestCommonPrefix(string[] strs)
@@ -79,13 +104,13 @@ namespace NetcoreProblems
             return false;
         }
 
-        public static ListNode AddTwoNumbers(ListNode a, ListNode b)
+        public static ListNode AddTwoNumbers(ListNode? a, ListNode? b)
         {
             var carry = 0;
             var result = new ListNode();
-            ListNode currentNode = null;
+            ListNode? currentNode = null;
 
-            while (a?.val != null || b?.val != null)
+            while (a?.Val != null || b?.Val != null)
             {
                 if (currentNode == null)
                 {
@@ -93,30 +118,30 @@ namespace NetcoreProblems
                 }
                 else
                 {
-                    currentNode.next = new ListNode();
-                    currentNode = currentNode.next;
+                    currentNode.Next = new ListNode();
+                    currentNode = currentNode.Next;
                 }
 
-                int val = ((a?.val ?? 0) + (b?.val ?? 0) + carry) % 10;
-                carry = ((a?.val ?? 0) + (b?.val ?? 0) + carry) / 10;
+                int val = ((a?.Val ?? 0) + (b?.Val ?? 0) + carry) % 10;
+                carry = ((a?.Val ?? 0) + (b?.Val ?? 0) + carry) / 10;
 
-                currentNode.val = val;
+                currentNode.Val = val;
 
                 if (a != null)
                 {
-                    a = a.next;
+                    a = a.Next;
                 }
 
                 if (b != null)
                 {
-                    b = b.next;
+                    b = b.Next;
                 }
             }
 
-            if (carry > 0)
+            if (carry > 0 && currentNode != null)
             {
-                currentNode.next = new ListNode(carry);
-                currentNode = currentNode.next;
+                currentNode.Next = new ListNode(carry);
+                _ = currentNode.Next;
             }
 
             return result;
