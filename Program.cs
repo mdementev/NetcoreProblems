@@ -32,12 +32,13 @@ namespace NetcoreProblems
             Assert.Equal(1994, RomanToInteger("MCMXCIV"));
             // AddTwoNumbers (not passing, probably need to implement comparison logic)
             // Assert.Equal(expectedNode, AddTwoNumbers(node1, node2));
+
             // Find symbol in string
             Assert.True(StringContainsSymbol('a', "defa"));
             // Longest Common Prefix
             Assert.Equal("fl", LongestCommonPrefix(new string[3] { "flower", "flow", "flight" }));
 
-            // using Fluent assertions going forward....
+            // Practicing FluentAssertions going forward....
 
             // Design hashset problem (not a smart way to)
             var hashset = new MyHashSet();
@@ -49,7 +50,6 @@ namespace NetcoreProblems
             // Reverse integer (nothing smart, just linq)
             Reverse(123456).Should().Be(654321);
             Reverse(-123456).Should().Be(-654321);
-
 
             // TestingPerformance();
         }
